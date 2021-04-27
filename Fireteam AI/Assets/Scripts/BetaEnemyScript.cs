@@ -1085,47 +1085,51 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void ApplyForceModifiers()
 	{
-		// 0 = death from bullet, 1 = death from explosion, 2 = death from fire/etc.
-		if (lastHitBy == 0) {
-			Rigidbody rb = ragdollBodies[lastBodyPartHit - 1];
-			if (lastBodyPartHit == WeaponActionScript.HEAD_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(headTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.TORSO_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(torsoTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(leftArmTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(leftForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(rightArmTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(rightForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.PELVIS_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(pelvisTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(leftUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(leftLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(rightUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
-			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
-				Vector3 forceDir = Vector3.Normalize(rightLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
-				rb.AddForce(forceDir, ForceMode.Impulse);
+		try {
+			// 0 = death from bullet, 1 = death from explosion, 2 = death from fire/etc.
+			if (lastHitBy == 0) {
+				Rigidbody rb = ragdollBodies[lastBodyPartHit - 1];
+				if (lastBodyPartHit == WeaponActionScript.HEAD_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(headTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.TORSO_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(torsoTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(leftArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(leftForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(rightArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(rightForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.PELVIS_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(pelvisTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(leftUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(leftLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(rightUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				} else if (lastBodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
+					Vector3 forceDir = Vector3.Normalize(rightLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+					rb.AddForce(forceDir, ForceMode.Impulse);
+				}
+			} else if (lastHitBy == 1) {
+				foreach (Rigidbody rb in ragdollBodies) {
+					rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
+				}
 			}
-		} else if (lastHitBy == 1) {
-			foreach (Rigidbody rb in ragdollBodies) {
-				rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
-			}
+		} catch (Exception e) {
+			Debug.LogError("Exception caught while applying force modifiers to ragdoll for " + gameObject.name);
 		}
 	}
 
