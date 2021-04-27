@@ -745,9 +745,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     } else {
                         LoadAchievements(null, achievementMap);
                     }
-                    if (playerDataSnap.ContainsKey("gifts")) {
-                        LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
-                    }
+                    // if (playerDataSnap.ContainsKey("gifts")) {
+                    //     LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
+                    // }
                     LoadFriends(friendsUsernameMap, expMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
