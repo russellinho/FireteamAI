@@ -13,6 +13,8 @@ public class Carryable : MonoBehaviour
     public int carriedByPlayerId;
     public Transform carriedByTransform;
     public Rigidbody mainRigid;
+	public Vector3 carryPosition;
+	public Vector3 carryRotation;
 
     public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;
@@ -27,8 +29,8 @@ public class Carryable : MonoBehaviour
 			mainRigid.useGravity = false;
 			mainRigid.isKinematic = true;
 			gameObject.transform.SetParent(carriedByTransform);
-			transform.localPosition = Vector3.zero;
-			transform.localRotation = Quaternion.identity;
+			transform.localPosition = carryPosition;
+			transform.localRotation = Quaternion.Euler(carryRotation);
 		}
 	}
 
