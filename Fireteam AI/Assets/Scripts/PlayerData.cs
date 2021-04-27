@@ -158,6 +158,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
         else if (playerdata != this)
         {
+            Debug.LogError("DESTROYED: " + gameObject.name);
             Destroy(gameObject);
         }
     }
