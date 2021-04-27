@@ -693,21 +693,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 fpc.m_IsCrouching = false;
             }
 
-            FpcCrouch(fpc.m_IsCrouching ? 'c' : 's');
-            fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
+            HandleCrouchEffects();
+        }
+    }
 
-            // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
-            if (fpc.m_IsCrouching) {
-                charController.height = 1f;
-                charController.center = new Vector3(0f, 0.54f, 0f);
-                // Network it
-                pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
-            } else {
-                charController.height = charHeightOriginal;
-                charController.center = new Vector3(0f, charCenterYOriginal, 0f);
-                // Network it
-                pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
-            }
+    void HandleCrouchEffects()
+    {
+        FpcCrouch(fpc.m_IsCrouching ? 'c' : 's');
+        fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
+
+        // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
+        if (fpc.m_IsCrouching) {
+            charController.height = 1f;
+            charController.center = new Vector3(0f, 0.54f, 0f);
+            // Network it
+            pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
+        } else {
+            charController.height = charHeightOriginal;
+            charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+            // Network it
+            pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
         }
     }
 
@@ -863,6 +868,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     interactionTimer = 0f;
                     pView.RPC("RpcCarryNpc", RpcTarget.All, pView.Owner.ActorNumber);
                     fpc.m_IsCrouching = false;
+                    HandleCrouchEffects();
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -879,6 +885,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     b.BagBody();
                     int carryableId = gameController.SpawnBodyBag(b.transform.position);
                     pView.RPC("RpcCarryItem", RpcTarget.All, carryableId, pView.Owner.ActorNumber);
+                    fpc.m_IsCrouching = false;
+                    HandleCrouchEffects();
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -929,6 +937,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     pView.RPC("RpcCarryItem", RpcTarget.All, c.carryableId, pView.Owner.ActorNumber);
                     if (c.immobileWhileCarrying) {
                         fpc.m_IsCrouching = false;
+                        HandleCrouchEffects();
                     }
                     activeInteractable = null;
                     interactionLock = true;
