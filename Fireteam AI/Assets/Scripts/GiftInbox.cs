@@ -119,7 +119,9 @@ public class GiftInbox : MonoBehaviour
     {
         if (giftEntryCreateQueue.Count > 0) {
             QueueData q = giftEntryCreateQueue.Dequeue();
-            CreateGiftEntry(q.giftId, q.category, q.sender, q.itemName, q.duration, q.message);
+            if (!giftEntries.ContainsKey(q.giftId)) {
+                CreateGiftEntry(q.giftId, q.category, q.sender, q.itemName, q.duration, q.message);
+            }
         }
     }
 
