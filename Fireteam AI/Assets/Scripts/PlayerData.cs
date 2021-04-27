@@ -1025,7 +1025,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     public void LoadGifts(Dictionary<object, object> snapshot)
     {
-        playerDataModifyLegalFlag = true;
 
         foreach(KeyValuePair<object, object> entry in snapshot) {
             string giftId = entry.Key.ToString();
@@ -1052,7 +1051,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             }
         }
 
-        playerDataModifyLegalFlag = false;
     }
 
     void LoadSkills(Dictionary<object, object> mySkills)
