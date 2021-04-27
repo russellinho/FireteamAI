@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
-public class Carryable : MonoBehaviour
+public class Carryable : MonoBehaviourPunCallbacks
 {
     public float throwForceMultiplier;
     public float weightSpeedReduction;
@@ -15,6 +18,12 @@ public class Carryable : MonoBehaviour
     public Rigidbody mainRigid;
 	public Vector3 carryPosition;
 	public Vector3 carryRotation;
+
+	// void Awake()
+	// {
+	// 	carriedByPlayerId = -1;
+	// 	SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	// }
 
     public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;
