@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7799369820369688372}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 25, y: 25, z: 5}
+  m_LocalScale: {x: 20, y: 20, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -130,12 +130,12 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0.02, y: 0.02, z: 0.02}
-  fullPosMale: {x: 0.1, y: 0.157, z: 0.236}
-  fullRotMale: {x: -0.44, y: 91.39201, z: 177.6}
-  fullScaleMale: {x: 25, y: 25, z: 5}
+  fullPosMale: {x: -0.0077, y: 0.156, z: 0.255}
+  fullRotMale: {x: -180.194, y: -71.336, z: -2.44397}
+  fullScaleMale: {x: 20, y: 20, z: 4}
   fullPosFemale: {x: 0.101, y: 0.124, z: 0.259}
-  fullRotFemale: {x: -0.44, y: 91.39201, z: 193.797}
-  fullScaleFemale: {x: 25, y: 25, z: 5}
+  fullRotFemale: {x: -180.194, y: -71.336, z: -2.44397}
+  fullScaleFemale: {x: 20, y: 20, z: 4}
   maleOverrideController: {fileID: 22100000, guid: c278715c98b2c3f4d8797d9af54d7d78,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 262f050b2c2b6104cac47d1cdffdc18c,
