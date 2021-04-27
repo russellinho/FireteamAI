@@ -146,8 +146,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/weapons").ChildChanged += HandleInventoryChanged;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/mods").ChildChanged += HandleInventoryChanged;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildChanged += HandleInventoryChanged;
-
-            Debug.LogError("not again");
+            
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
             skillList.CollectionChanged += OnPlayerInfoChange;
@@ -325,6 +324,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             {
                 if (PlayerData.playerdata.bodyReference == null)
                 {
+                    Debug.LogError("CALLED BY " + gameObject.name);
                     LoadPlayerData();
                     // LoadInventory();
                 }
