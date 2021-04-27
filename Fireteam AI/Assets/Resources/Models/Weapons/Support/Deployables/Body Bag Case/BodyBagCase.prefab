@@ -120,16 +120,16 @@ MonoBehaviour:
   weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: -0.002, y: 0.0013, z: 0}
+  fpcPosMale: {x: -0.002, y: 0, z: -0.00218}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 0, y: 0, z: -20.737}
-  fpcScaleMale: {x: 0.02, y: 0.02, z: 0.02}
-  fpcPosFemale: {x: -0.002, y: 0.0013, z: 0}
+  fpcRotMale: {x: -52.93, y: 0, z: 0}
+  fpcScaleMale: {x: 0.12, y: 0.12, z: 0.02}
+  fpcPosFemale: {x: -0.002, y: 0, z: -0.00218}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0.02, y: 0.02, z: 0.02}
+  fpcRotFemale: {x: -52.93, y: 0, z: 0}
+  fpcScaleFemale: {x: 0.12, y: 0.12, z: 0.02}
   fullPosMale: {x: -0.0077, y: 0.156, z: 0.255}
   fullRotMale: {x: -180.194, y: -71.336, z: -2.44397}
   fullScaleMale: {x: 20, y: 20, z: 4}
