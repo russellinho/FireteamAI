@@ -425,7 +425,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 
 		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
+		if (actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
@@ -489,7 +489,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 		
 		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
+		if (actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
