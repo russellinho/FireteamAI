@@ -407,13 +407,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!PhotonNetwork.IsMasterClient || health <= 0) {
-			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			// 	StopVoices();
-			// }
-			if (actionState == ActionStates.Dead) {
-				return;
-			}
+		if (!PhotonNetwork.IsMasterClient || actionState == ActionStates.Dead) {
+			return;
 		}
 
 		HandleHealthStatus();
@@ -476,13 +471,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!gameControllerScript.isVersusHostForThisTeam() || health <= 0) {
-			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-				// StopVoices();
-			// }
-			if (actionState == ActionStates.Dead) {
-				return;
-			}
+		if (!gameControllerScript.isVersusHostForThisTeam() || actionState == ActionStates.Dead) {
+			return;
 		}
 
 		HandleHealthStatus();
@@ -1524,6 +1514,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead)
 		{
+			Debug.LogError("AC STATE: " + actionState + " | " + actionState.ToString());
 			// Spawn a drop box
 			int r = Random.Range(0, 100);
 			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
@@ -2618,7 +2609,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void DropAmmoPickup() {
-		Debug.LogError("DROPPING AMMO");
 		GameObject o = GameObject.Instantiate(ammoBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
 		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
 		gameControllerScript.DropPickup(o.GetInstanceID(), o);
@@ -2626,7 +2616,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void DropHealthPickup() {
-		Debug.LogError("DROPPING HP");
 		GameObject o = GameObject.Instantiate(healthBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
 		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
 		gameControllerScript.DropPickup(o.GetInstanceID(), o);
