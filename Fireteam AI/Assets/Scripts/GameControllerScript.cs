@@ -880,7 +880,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (string.IsNullOrEmpty(PlayerData.playerdata.disconnectReason)) {
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
-		SceneManager.LoadScene ("Title");
+		PhotonNetwork.LoadLevel("Title");
 	}
 
 	void SwitchToGameOverScene() {

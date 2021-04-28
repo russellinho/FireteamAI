@@ -1127,7 +1127,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void ReturnToMenu()
     {
-        SceneManager.LoadScene("Title");
+        PhotonNetwork.LoadLevel("Title");
 		PhotonNetwork.Disconnect ();
     }
 
