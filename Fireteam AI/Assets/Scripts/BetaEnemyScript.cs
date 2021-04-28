@@ -2446,7 +2446,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Reset values to respawn
 	IEnumerator Respawn(float respawnTime, bool syncWithClientsAgain) {
 		if (actionState != ActionStates.Dead) yield return null;
-		yield return new WaitForSeconds (respawnTime + PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetHackerBoost());
+		float hackerBoost = 0f;
+		if (PlayerData.playerdata.inGamePlayerReference != null) {
+			hackerBoost = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetHackerBoost();
+		}
+		yield return new WaitForSeconds (respawnTime + hackerBoost);
 		if (gameControllerScript.assaultMode && gameControllerScript.spawnMode != SpawnMode.Paused) {
 			RespawnAction (syncWithClientsAgain);
 		} else {

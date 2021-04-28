@@ -158,7 +158,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
         else if (playerdata != this)
         {
-            Debug.LogError("DESTROYED: " + gameObject.name);
+            SceneManager.sceneLoaded -= OnSceneFinishedLoading;
             Destroy(gameObject);
         }
     }
@@ -325,7 +325,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             {
                 if (PlayerData.playerdata.bodyReference == null)
                 {
-                    Debug.LogError("CALLED BY " + gameObject.name);
+                    Debug.LogError("LOADING P DATA");
                     LoadPlayerData();
                     // LoadInventory();
                 }
@@ -747,7 +747,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     } else {
                         LoadAchievements(null, achievementMap);
                     }
-                    Debug.LogError("passs");
                     if (playerDataSnap.ContainsKey("gifts")) {
                         LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
                     }
