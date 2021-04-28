@@ -2618,6 +2618,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void DropAmmoPickup() {
+		Debug.LogError("DROPPING AMMO");
 		GameObject o = GameObject.Instantiate(ammoBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
 		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
 		gameControllerScript.DropPickup(o.GetInstanceID(), o);
@@ -2625,6 +2626,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void DropHealthPickup() {
+		Debug.LogError("DROPPING HP");
 		GameObject o = GameObject.Instantiate(healthBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
 		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
 		gameControllerScript.DropPickup(o.GetInstanceID(), o);
