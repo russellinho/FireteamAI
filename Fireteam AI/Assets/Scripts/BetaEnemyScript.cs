@@ -2851,7 +2851,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
 					gunRef.weaponParts[0].enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
-					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap);
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap,
+					animator.GetBool("Incapacitated"), animator.GetInteger("WeaponType"), animator.GetInteger("Moving"), animator.GetBool("weaponReady"), animator.GetBool("Crouching"), animator.GetBool("isSprinting"),
+					animator.GetBool("isDead"), animator.GetBool("isWalking"), animator.GetBool("Swimming"), animator.GetBool("onTitle"), animator.GetBool("Disoriented"), animator.GetBool("Patrol"));
 		}
 	}
 
@@ -2861,7 +2863,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
-					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, string team) {
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, string team,
+					bool animIncapacitated, int animWeaponType, int animMoving, bool animWeaponReady, bool animCrouching, bool animSprinting, bool animDead, bool animWalking,
+					bool animSwimming, bool animTitle, bool animDisoriented, bool animPatrol) {
 		if (team != gameControllerScript.teamMap) return;
 		// if (playerDespawned) {
 		// 	modeler.DespawnPlayer();
@@ -2907,7 +2911,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		this.alertTeamAfterAlertedTimer = alertTeamAfterAlertedTimer;
 		this.inCover = inCover;
 		this.crouchMode = crouchMode;
-		DecideAnimation();
+		animator.Play("IdleAssaultRifle", 0);
+		animator.Play("Idle", 1);
+		animator.SetBool("Incapacitated", animIncapacitated);
+		animator.SetInteger("WeaponType", animWeaponType);
+		animator.SetInteger("Moving", animMoving);
+		animator.SetBool("weaponReady", animWeaponReady);
+		animator.SetBool("Crouching", animCrouching);
+		animator.SetBool("isSprinting", animSprinting);
+		animator.SetBool("isDead", animDead);
+		animator.SetBool("isWalking", animWalking);
+		animator.SetBool("Swimming", animSwimming);
+		animator.SetBool("onTitle", animTitle);
+		animator.SetBool("Disoriented", animDisoriented);
+		animator.SetBool("Patrol", animPatrol);
 	}
 
 	void ToggleWeaponMesh(bool b)
