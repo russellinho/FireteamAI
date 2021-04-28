@@ -269,7 +269,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
         string levelName = SceneManager.GetActiveScene().name;
-        Debug.LogError("Scene loaded: " + levelName);
         if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
             int spawnPointIndex = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]);
@@ -325,7 +324,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             {
                 if (PlayerData.playerdata.bodyReference == null)
                 {
-                    Debug.LogError("LOADING P DATA");
                     LoadPlayerData();
                     // LoadInventory();
                 }
