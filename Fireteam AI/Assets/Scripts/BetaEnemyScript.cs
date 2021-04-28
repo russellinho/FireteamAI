@@ -2907,6 +2907,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		this.alertTeamAfterAlertedTimer = alertTeamAfterAlertedTimer;
 		this.inCover = inCover;
 		this.crouchMode = crouchMode;
+		DecideAnimation();
 	}
 
 	void ToggleWeaponMesh(bool b)
