@@ -34,7 +34,9 @@ public class Carryable : MonoBehaviourPunCallbacks
 			mainRigid.isKinematic = false;
 			mainRigid.useGravity = true;
 		} else {
-			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
+			PlayerActionScript p = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>();
+			carriedByTransform = p.carryingSlot;
+			p.objectCarrying = gameObject;
 			mainRigid.useGravity = false;
 			mainRigid.isKinematic = true;
 			gameObject.transform.SetParent(carriedByTransform);
@@ -67,5 +69,6 @@ public class Carryable : MonoBehaviourPunCallbacks
 			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
 		}
     }
+
 
 }

@@ -1423,9 +1423,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			{
 				string[] cDetails = c.Split('|');
 				int parsedId = int.Parse(cDetails[0]);
-				Debug.LogError("carryable: " + parsedId);
 				if (!carryableList.ContainsKey(parsedId)) {
-					Debug.LogError("creating " + parsedId);
 					// Sync carryable
 					GameObject o = GameObject.Instantiate((GameObject)Resources.Load(cDetails[8]), new Vector3(float.Parse(cDetails[2]), float.Parse(cDetails[3]), float.Parse(cDetails[4])), Quaternion.Euler(float.Parse(cDetails[5]), float.Parse(cDetails[6]), float.Parse(cDetails[7])));
 					Carryable cScript = o.GetComponent<Carryable>();

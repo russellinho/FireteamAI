@@ -165,7 +165,9 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			mainRigid.useGravity = true;
 		} else {
 			actionState = ActionStates.Carried;
-			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
+			PlayerActionScript p = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>();
+			carriedByTransform = p.carryingSlot;
+			p.objectCarrying = gameObject;
 			// ToggleRagdoll(false);
 			mainRigid.useGravity = false;
 			mainRigid.isKinematic = true;
