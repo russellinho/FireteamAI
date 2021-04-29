@@ -15,15 +15,14 @@ public class MeshFixer : MonoBehaviour
         Dictionary<string,Transform> boneMap = new Dictionary<string,Transform>();
         rootBoneMap = new Dictionary<string, Transform>();
         
-        if (objectCarrying != null && objectCarrying.gameObject.name == "VIP") {
-            Debug.LogError("yessir");
+        if (objectCarrying != null) {
             objectCarrying.SetActive(false);
         }
         Transform[] r = rootBone.GetComponentsInChildren<Transform>();
         for (int i = 0; i < r.Length; i++) {
             rootBoneMap[r[i].gameObject.name] = r[i];
         }
-        if (objectCarrying != null && objectCarrying.gameObject.name == "VIP") {
+        if (objectCarrying != null) {
             objectCarrying.SetActive(true);
         }
 
