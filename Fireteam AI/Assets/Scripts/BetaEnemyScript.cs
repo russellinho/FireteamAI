@@ -2849,7 +2849,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, marker.enabled,
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
-					gunRef.weaponParts[0].enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
+					gunRef.weaponParts[0].enabled, modeler.BodyIsDespawned(), prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
 					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap);
 		}
@@ -2857,7 +2857,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	[PunRPC]
 	void RpcSyncDataEnemies(bool markerEnabled,
-					bool navMeshEnabled, float navMeshSpeed, bool navMeshObstacleEnabled, bool gunRefEnabled, float preNavDestX, float preNavDestY,
+					bool navMeshEnabled, float navMeshSpeed, bool navMeshObstacleEnabled, bool gunRefEnabled, bool bodyMeshEnabled, float preNavDestX, float preNavDestY,
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
@@ -2875,6 +2875,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		navMesh.enabled = navMeshEnabled;
 		navMeshObstacle.enabled = navMeshObstacleEnabled;
 		ToggleWeaponMesh(gunRefEnabled);
+		if (!bodyMeshEnabled) {
+			modeler.DespawnPlayer();
+		}
 		prevNavDestination = new Vector3(preNavDestX, preNavDestY, preNavDestZ);
 		this.prevWasStopped = prevWasStopped;
 		actionState = acState;
