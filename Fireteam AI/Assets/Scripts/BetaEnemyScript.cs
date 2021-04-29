@@ -2181,7 +2181,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float angleBetween = Vector3.Angle (transform.forward, toTarget);
 					if (angleBetween <= 90f) {
 						if (TargetIsObscured(o.Value, false)) {
-							Debug.LogError("target obscured");
 							continue;
 						}
 						Debug.LogError("passed - increasing suspicion");
@@ -2310,12 +2309,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			// Only check direct hit, no upper and lower half for non-humans
 			RaycastHit hit;
 			if (!Physics.Linecast(headTransform.position, targetRef.transform.position, out hit, OBSCURE_IGNORE)) {
-				Debug.LogError("hit A " + hit.transform.gameObject.name);
 				return true;
 			}
 			Carryable c = hit.transform.GetComponent<Carryable>();
 			if (c == null) {
-				Debug.LogError("hit B " + hit.transform.gameObject.name);
 				return true;
 			}
 		}
@@ -3016,7 +3013,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (PhotonNetwork.LocalPlayer.IsMasterClient && !gameControllerScript.assaultMode) {
 			SuspectScan();
 		}
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(1.2f);
 		StopCoroutine("ScanForSuspects");
 		if (!gameControllerScript.assaultMode) {
 			StartCoroutine("ScanForSuspects");
