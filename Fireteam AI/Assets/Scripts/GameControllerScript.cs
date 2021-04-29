@@ -1203,6 +1203,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			Carryable c = k.Value.GetComponent<Carryable>();
 			// Add id, carriedByPlayerId, position, rotation, ToggleIsCarrying()
 			s += c.carryableId + "|" + c.carriedByPlayerId + "|" + c.gameObject.transform.position.x + "|" + c.gameObject.transform.position.y + "|" + c.gameObject.transform.position.z + "|" + c.gameObject.transform.rotation.eulerAngles.x + "|" + c.gameObject.transform.rotation.eulerAngles.y + "|" + c.gameObject.transform.rotation.eulerAngles.z + "|" + c.refString;
+			first = false;
 		}
 		return s;
 	}
@@ -1422,7 +1423,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			{
 				string[] cDetails = c.Split('|');
 				int parsedId = int.Parse(cDetails[0]);
+				Debug.LogError("carryable: " + parsedId);
 				if (!carryableList.ContainsKey(parsedId)) {
+					Debug.LogError("creating " + parsedId);
 					// Sync carryable
 					GameObject o = GameObject.Instantiate((GameObject)Resources.Load(cDetails[8]), new Vector3(float.Parse(cDetails[2]), float.Parse(cDetails[3]), float.Parse(cDetails[4])), Quaternion.Euler(float.Parse(cDetails[5]), float.Parse(cDetails[6]), float.Parse(cDetails[7])));
 					Carryable cScript = o.GetComponent<Carryable>();

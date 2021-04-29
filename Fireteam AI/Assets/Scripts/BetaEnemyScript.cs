@@ -1514,7 +1514,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead)
 		{
-			Debug.LogError("AC STATE: " + actionState + " | " + actionState.ToString());
 			// Spawn a drop box
 			int r = Random.Range(0, 100);
 			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
