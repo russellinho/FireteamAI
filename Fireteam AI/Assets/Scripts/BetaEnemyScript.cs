@@ -2877,6 +2877,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ToggleWeaponMesh(gunRefEnabled);
 		if (!bodyMeshEnabled) {
 			modeler.DespawnPlayer();
+			ToggleWeaponMesh(false);
 		}
 		prevNavDestination = new Vector3(preNavDestX, preNavDestY, preNavDestZ);
 		this.prevWasStopped = prevWasStopped;
