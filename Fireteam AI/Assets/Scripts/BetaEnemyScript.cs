@@ -2165,7 +2165,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 							continue;
 						}
 						// Increase suspicion level by constant level for this
-						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f);
+						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f) * 2f;
 						IncreaseSuspicionLevel(suspicionIncrease);
 					}
 				}
@@ -2186,7 +2186,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						}
 						Debug.LogError("passed - increasing suspicion");
 						// Increase suspicion level by constant level for this
-						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f);
+						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f) * 2f;
 						IncreaseSuspicionLevel(suspicionIncrease);
 					}
 				}
@@ -3014,7 +3014,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (PhotonNetwork.LocalPlayer.IsMasterClient && !gameControllerScript.assaultMode) {
 			SuspectScan();
 		}
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds(1f);
 		StopCoroutine("ScanForSuspects");
 		if (!gameControllerScript.assaultMode) {
 			StartCoroutine("ScanForSuspects");
