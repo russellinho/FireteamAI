@@ -16,6 +16,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
+	private const float OBJECT_VISIBILITY_MULTIPLIER = 50f;
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
@@ -112,7 +113,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	// Target references
 	public GameObject playerTargeting;
-	private bool objectTargeting;
+	public bool objectTargeting;
 	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
 
 	// All patrol pathfinding points for an enemy
@@ -2165,9 +2166,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void SuspectScan()
 	{
+		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
 		// If currently targeting a player, ignore the other objects that they see
 		if (playerTargeting != null) return;
-		objectTargeting = false;
+		bool newObjectTargeting = false;
 
 		// Scan for other enemy allies in sight that are suspicious or dead and not disposed of
 		foreach (KeyValuePair<int, GameObject> o in gameControllerScript.enemyList) {
@@ -2181,9 +2183,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 							continue;
 						}
 						// Increase suspicion level by constant level for this
-						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f) * 2f;
+						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f) * OBJECT_VISIBILITY_MULTIPLIER;
 						IncreaseSuspicionLevel(suspicionIncrease);
-						objectTargeting = true;
+						newObjectTargeting = true;
 					}
 				}
 			}
@@ -2200,17 +2202,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						if (TargetIsObscured(o.Value, false)) {
 							continue;
 						}
-						Debug.LogError("passed - increasing suspicion");
 						// Increase suspicion level by constant level for this
-						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f) * 2f;
+						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f) * OBJECT_VISIBILITY_MULTIPLIER;
 						IncreaseSuspicionLevel(suspicionIncrease);
-						objectTargeting = true;
+						newObjectTargeting = true;
 					}
 				}
 			}
 		}
 
-		SetObjectTargeting(objectTargeting);
+		SetObjectTargeting(newObjectTargeting);
 	}
 
 	void PlayerScan() {
@@ -2457,7 +2458,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void SetObjectTargeting(bool b)
 	{
 		if (objectTargeting != b) {
-			pView.RPC("RpcSetObjectTargeting", RpcTarget.All, objectTargeting, gameControllerScript.teamMap);
+			pView.RPC("RpcSetObjectTargeting", RpcTarget.All, b, gameControllerScript.teamMap);
 		}
 	}
 

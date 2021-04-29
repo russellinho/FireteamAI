@@ -27,6 +27,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float INTERACTION_DISTANCE = 4.5f;
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 4f;
+    const float PICK_UP_TIME = 2f;
     const float NPC_INTERACT_TIME = 5f;
     const float BODY_BAG_TIME = 9f;
     const float HEAL_TIME = 5f;
@@ -929,7 +930,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             } else if (interactingWith == "Carryable") {
                 hud.ToggleActionBar(true, "PICKING UP...");
-                interactionTimer += (Time.deltaTime / (DEPLOY_USE_TIME * (1f - skillController.GetDexterityBoost())));
+                interactionTimer += (Time.deltaTime / (PICK_UP_TIME * (1f - skillController.GetDexterityBoost())));
                 hud.SetActionBarSlider(interactionTimer);
                 if (interactionTimer >= 1f) {
                     Carryable c = activeInteractable.GetComponent<Carryable>();
@@ -2121,7 +2122,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             detectionLevel = 0f;
         } else {
             detectionLevel = enemySeenBy.suspicionMeter;
-            if (detectionLevel <= 0f) {
+            if (detectionLevel <= 0f || (enemySeenBy.objectTargeting && (enemySeenBy.playerTargeting == null || enemySeenBy.playerTargeting.GetInstanceID() != gameObject.GetInstanceID()))) {
                 ClearEnemySeenBy();
             }
         }
