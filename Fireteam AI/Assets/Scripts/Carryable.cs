@@ -12,6 +12,7 @@ public class Carryable : MonoBehaviourPunCallbacks
 	public bool immobileWhileCarrying;
     public float detectionRatePenalty;
     public string carryableName;
+	public string refString;
     public int carryableId;
     public int carriedByPlayerId;
     public Transform carriedByTransform;
@@ -19,13 +20,12 @@ public class Carryable : MonoBehaviourPunCallbacks
 	public Vector3 carryPosition;
 	public Vector3 carryRotation;
 
-	// void Awake()
-	// {
-	// 	carriedByPlayerId = -1;
-	// 	SceneManager.sceneLoaded += OnSceneFinishedLoading;
-	// }
+	void Awake()
+	{
+		carriedByPlayerId = -1;
+	}
 
-    public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
+    public void ToggleIsCarrying(int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;
 		if (carriedByPlayerId == -1) {
 			carriedByTransform = null;
@@ -43,9 +43,29 @@ public class Carryable : MonoBehaviourPunCallbacks
 		}
 	}
 
+	public void SyncCarrying() {
+		if (carriedByPlayerId != -1) {
+			StartCoroutine(DelayedToggleIsCarrying(carriedByPlayerId));
+		}
+	}
+
+	IEnumerator DelayedToggleIsCarrying(int carriedByPlayerId)
+	{
+		yield return new WaitForSeconds(1.5f);
+		ToggleIsCarrying(carriedByPlayerId);
+	}
+
     public void Launch(float xForce, float yForce, float zForce) {
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         mainRigid.velocity = new Vector3(xForce * throwForceMultiplier, yForce * throwForceMultiplier, zForce * throwForceMultiplier);
+    }
+
+	public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+		if (otherPlayer.ActorNumber == carriedByPlayerId) {
+			ToggleIsCarrying(-1);
+			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
+		}
     }
 
 }

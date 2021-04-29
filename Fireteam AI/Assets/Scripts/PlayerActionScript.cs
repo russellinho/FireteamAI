@@ -760,7 +760,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 //weaponScript.SwitchWeaponToFullBody();
                 StartCoroutine(DelayToggleRagdoll(0.1f, true));
                 SetInteracting(false, null);
-                DropCarrying();
+                DropCarrying(true);
                 fpc.SetIsIncapacitated(false);
                 hud.SetCarryingText(null);
                 hud.ClearAllSkills();
@@ -1191,7 +1191,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (n != null && n.carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && !hud.PauseIsActive()) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
                     // Drop off the NPC
-                    DropCarrying();
+                    DropCarrying(true);
                     hud.SetCarryingText(null);
                 }
                 return;
@@ -1200,7 +1200,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (c != null && c.carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && !hud.PauseIsActive()) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
                     // Drop off the item
-                    DropCarrying();
+                    DropCarrying(false);
                     hud.SetCarryingText(null);
                 }
                 return;
@@ -1881,7 +1881,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameObject.layer == 0) return;
         // Put item in carrying slot
         Carryable c = gameController.GetCarryable(carryableId).GetComponent<Carryable>();
-        c.ToggleIsCarrying(true, playerId);
+        c.ToggleIsCarrying(playerId);
         objectCarrying = c.gameObject;
         if (playerId == PhotonNetwork.LocalPlayer.ActorNumber) {
             hud.SetCarryingText("BODY BAG");
@@ -1901,14 +1901,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void RpcDropItem(float startPosX, float startPosY, float startPosZ, float launchX, float launchY, float launchZ)
+    void RpcDropItem(float startPosX, float startPosY, float startPosZ, float launchX, float launchY, float launchZ, bool skipThrow)
     {
         if (gameObject.layer == 0) return;
         Carryable c = objectCarrying.GetComponent<Carryable>();
         int droppedOffBy = c.carriedByPlayerId;
-        c.ToggleIsCarrying(false, -1);
-        c.transform.position = new Vector3(startPosX + launchX, startPosY + launchY, startPosZ + launchZ);
-        c.Launch(launchX, launchY, launchZ);
+        c.ToggleIsCarrying(-1);
+        if (skipThrow) {
+            c.transform.position = new Vector3(startPosX, startPosY, startPosZ);
+        } else {
+            c.transform.position = new Vector3(startPosX + launchX, startPosY + launchY, startPosZ + launchZ);
+            c.Launch(launchX, launchY, launchZ);
+        }
         objectCarrying = null;
     }
 
@@ -2257,13 +2261,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         interactingWith = objectName;
     }
 
-    void DropCarrying() {
+    void DropCarrying(bool skipThrow) {
         if (objectCarrying != null) {
             if (objectCarrying.GetComponent<NpcScript>() != null) {
                 pView.RPC("RpcDropOffNpc", RpcTarget.All);
             } else {
                 pView.RPC("RpcDropItem", RpcTarget.All, viewCam.transform.position.x, viewCam.transform.position.y, viewCam.transform.position.z,
-                    viewCam.transform.forward.x, viewCam.transform.forward.y, viewCam.transform.forward.z);
+                    viewCam.transform.forward.x, viewCam.transform.forward.y, viewCam.transform.forward.z, skipThrow);
             }
         }
     }
@@ -2365,7 +2369,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         equipmentScript.ToggleFullBody(false);
         equipmentScript.ToggleMesh(false);
         SetInteracting(false, null);
-        DropCarrying();
+        DropCarrying(true);
         fpc.enabled = false;
         if (pView.IsMine) {
             hud.SetCarryingText(null);
@@ -2653,6 +2657,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void OnPlayerLeftMatch()
     {
         pView.RPC("RpcOnPlayerLeftMatch", RpcTarget.Others);
+        DropCarrying(true);
     }
 
     [PunRPC]
@@ -2961,7 +2966,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         lastStandTimer = skillController.GetLastStandTime();
         if (lastStandTimer > 0f) {
             interactedOnById = -1;
-            DropCarrying();
+            DropCarrying(true);
             // Set FPC controller to be in last stand mode
             charController.height = 0.9f;
             charController.center = new Vector3(0f, 0.27f, 0f);

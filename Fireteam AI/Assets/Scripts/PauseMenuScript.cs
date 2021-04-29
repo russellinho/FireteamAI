@@ -109,9 +109,9 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftMatch();
-			if (gameController.vipRef != null) {
-				gameController.vipRef.GetComponent<NpcScript>().OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
-			}
+			// if (gameController.vipRef != null) {
+			// 	gameController.vipRef.GetComponent<NpcScript>().OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
+			// }
 			PlayerData.playerdata.DestroyMyself();
 		}
 	}
