@@ -204,7 +204,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 
 		playerTargeting = null;
-		objectTargeting = false;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 		health = 100;
 		disorientationTime = 0f;
@@ -267,7 +266,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         coverSwitchPositionsTimer = Random.Range(12f, 18f);
 
         playerTargeting = null;
-		objectTargeting = false;
         spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         health = 100;
         disorientationTime = 0f;
@@ -1149,7 +1147,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 				playerTargeting = null;
 			}
-			objectTargeting = false;
+			SetObjectTargeting(false);
 
 			SetSuspicionLevel(0f, 0f, 0f);
 			SetAlertStatus(AlertStatus.Neutral);
@@ -1219,7 +1217,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						SetAlertStatus(AlertStatus.Alert);
 					}
 				} else if (objectTargeting) {
-					// TODO: Fill out
+					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
+						SetAlertStatus(AlertStatus.Suspicious);
+					} else {
+						SetAlertStatus(AlertStatus.Alert);
+					}
 				} else {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
@@ -1539,7 +1541,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 				playerTargeting = null;
 			}
-			objectTargeting = false;
+			SetObjectTargeting(false);
 
 			SetSuspicionLevel(0f, 0f, 0f);
 			SetAlertStatus(AlertStatus.Neutral);
@@ -1670,7 +1672,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						SetAlertStatus(AlertStatus.Alert);
 					}
 				} else if (objectTargeting) {
-					// TODO: Fill out
+					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
+						SetAlertStatus(AlertStatus.Suspicious);
+					} else {
+						SetAlertStatus(AlertStatus.Alert);
+					}
 				} else {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
@@ -2159,9 +2165,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void SuspectScan()
 	{
-		// TODO: Set objectTargeting to true here
 		// If currently targeting a player, ignore the other objects that they see
 		if (playerTargeting != null) return;
+		objectTargeting = false;
 
 		// Scan for other enemy allies in sight that are suspicious or dead and not disposed of
 		foreach (KeyValuePair<int, GameObject> o in gameControllerScript.enemyList) {
@@ -2177,6 +2183,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						// Increase suspicion level by constant level for this
 						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f) * 2f;
 						IncreaseSuspicionLevel(suspicionIncrease);
+						objectTargeting = true;
 					}
 				}
 			}
@@ -2197,10 +2204,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						// Increase suspicion level by constant level for this
 						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f) * 2f;
 						IncreaseSuspicionLevel(suspicionIncrease);
+						objectTargeting = true;
 					}
 				}
 			}
 		}
+
+		SetObjectTargeting(objectTargeting);
 	}
 
 	void PlayerScan() {
@@ -2434,7 +2444,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	[PunRPC]
 	void RpcSetTarget(int id, string team) {
-		// TODO: Create a RpcSetTarget for object targeting
         if (team != gameControllerScript.teamMap) return;
         if (id == -1) {
 			playerTargeting = null;
@@ -2443,6 +2452,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			playerTargeting = (GameObject)GameControllerScript.playerList [id].objRef;
 		}
+	}
+
+	void SetObjectTargeting(bool b)
+	{
+		if (objectTargeting != b) {
+			pView.RPC("RpcSetObjectTargeting", RpcTarget.All, objectTargeting, gameControllerScript.teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcSetObjectTargeting(bool b, string team)
+	{
+		if (team != gameControllerScript.teamMap) return;
+		objectTargeting = b;
 	}
 
 	// Reset values to respawn
@@ -2860,13 +2883,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			} else {
 				playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
 			}
-			// TODO: Fill out with object targeting
 
 			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, marker.enabled,
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
 					gunRef.weaponParts[0].enabled, modeler.BodyIsDespawned(), prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
-					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap);
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, objectTargeting, gameControllerScript.teamMap);
 		}
 	}
 
@@ -2876,7 +2898,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
-					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, string team) {
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, bool objectTargeting, string team) {
 		if (team != gameControllerScript.teamMap) return;
 		// if (playerDespawned) {
 		// 	modeler.DespawnPlayer();
@@ -2922,8 +2944,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			playerTargeting = (GameObject)GameControllerScript.playerList [playerTargetingId].objRef;
 		}
-		// TODO: Fill out with object targeting
 		lastSeenPlayerPos = new Vector3(lastSeenPlayerPosX, lastSeenPlayerPosY, lastSeenPlayerPosZ);
+		this.objectTargeting = objectTargeting;
 		this.suspicionMeter = suspicionMeter;
 		this.suspicionCoolDownDelay = suspicionCoolDownDelay;
 		this.increaseSuspicionDelay = increaseSuspicionDelay;
@@ -3029,7 +3051,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (PhotonNetwork.LocalPlayer.IsMasterClient && !gameControllerScript.assaultMode) {
 			SuspectScan();
 		}
-		yield return new WaitForSeconds(1.2f);
+		yield return new WaitForSeconds(1f);
 		StopCoroutine("ScanForSuspects");
 		if (!gameControllerScript.assaultMode) {
 			StartCoroutine("ScanForSuspects");
