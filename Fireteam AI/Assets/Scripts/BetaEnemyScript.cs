@@ -2174,14 +2174,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		// Scan for carryables that are in sight
 		foreach (KeyValuePair<int, GameObject> o in gameControllerScript.carryableList) {
-			Debug.LogError("there is a carryable");
 			Carryable c = o.Value.GetComponent<Carryable>();
 			if (c.carriedByTransform == null) {
-				Debug.LogError("hello");
 				if (Vector3.Distance (transform.position, c.transform.position) < range + 10f) {
 					Vector3 toTarget = c.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toTarget);
-					Debug.LogError("passed distance");
 					if (angleBetween <= 90f) {
 						if (TargetIsObscured(o.Value, false)) {
 							Debug.LogError("target obscured");
@@ -2312,7 +2309,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			// Only check direct hit, no upper and lower half for non-humans
 			RaycastHit hit;
-			if (Physics.Linecast(headTransform.position, targetRef.transform.position, out hit, OBSCURE_IGNORE)) {
+			if (!Physics.Linecast(headTransform.position, targetRef.transform.position, out hit, OBSCURE_IGNORE)) {
 				return true;
 			}
 			Carryable c = hit.transform.GetComponent<Carryable>();
@@ -3014,12 +3011,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	IEnumerator ScanForSuspects()
 	{
-		Debug.LogError("came in");
 		if (PhotonNetwork.LocalPlayer.IsMasterClient && !gameControllerScript.assaultMode) {
-			Debug.LogError("scanning");
 			SuspectScan();
 		}
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(1.5f);
 		StopCoroutine("ScanForSuspects");
 		if (!gameControllerScript.assaultMode) {
 			StartCoroutine("ScanForSuspects");
