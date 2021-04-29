@@ -112,6 +112,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	// Target references
 	public GameObject playerTargeting;
+	private bool objectTargeting;
 	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
 
 	// All patrol pathfinding points for an enemy
@@ -203,6 +204,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 
 		playerTargeting = null;
+		objectTargeting = false;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 		health = 100;
 		disorientationTime = 0f;
@@ -265,6 +267,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         coverSwitchPositionsTimer = Random.Range(12f, 18f);
 
         playerTargeting = null;
+		objectTargeting = false;
         spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         health = 100;
         disorientationTime = 0f;
@@ -1146,6 +1149,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 				playerTargeting = null;
 			}
+			objectTargeting = false;
 
 			SetSuspicionLevel(0f, 0f, 0f);
 			SetAlertStatus(AlertStatus.Neutral);
@@ -1214,6 +1218,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					} else {
 						SetAlertStatus(AlertStatus.Alert);
 					}
+				} else if (objectTargeting) {
+					// TODO: Fill out
 				} else {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
@@ -1533,6 +1539,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 				playerTargeting = null;
 			}
+			objectTargeting = false;
 
 			SetSuspicionLevel(0f, 0f, 0f);
 			SetAlertStatus(AlertStatus.Neutral);
@@ -1662,6 +1669,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					} else {
 						SetAlertStatus(AlertStatus.Alert);
 					}
+				} else if (objectTargeting) {
+					// TODO: Fill out
 				} else {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
@@ -2150,6 +2159,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void SuspectScan()
 	{
+		// TODO: Set objectTargeting to true here
 		// If currently targeting a player, ignore the other objects that they see
 		if (playerTargeting != null) return;
 
@@ -2424,6 +2434,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	[PunRPC]
 	void RpcSetTarget(int id, string team) {
+		// TODO: Create a RpcSetTarget for object targeting
         if (team != gameControllerScript.teamMap) return;
         if (id == -1) {
 			playerTargeting = null;
@@ -2473,6 +2484,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			coverWaitTimer = Random.Range (2f, 7f);
 			coverSwitchPositionsTimer = Random.Range (6f, 10f);
 			playerTargeting = null;
+			objectTargeting = false;
 			currentBullets = bulletsPerMag;
 			isCrouching = false;
 
@@ -2525,6 +2537,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (6f, 10f);
 		playerTargeting = null;
+		objectTargeting = false;
 		currentBullets = bulletsPerMag;
 		isCrouching = false;
 
@@ -2762,6 +2775,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			}
 			playerTargeting = null;
 		}
+		objectTargeting = false;
 
 		suspicionMeter = 0f;
         increaseSuspicionDelay = 0f;
@@ -2846,6 +2860,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			} else {
 				playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
 			}
+			// TODO: Fill out with object targeting
 
 			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, marker.enabled,
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
@@ -2907,6 +2922,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			playerTargeting = (GameObject)GameControllerScript.playerList [playerTargetingId].objRef;
 		}
+		// TODO: Fill out with object targeting
 		lastSeenPlayerPos = new Vector3(lastSeenPlayerPosX, lastSeenPlayerPosY, lastSeenPlayerPosZ);
 		this.suspicionMeter = suspicionMeter;
 		this.suspicionCoolDownDelay = suspicionCoolDownDelay;
