@@ -951,7 +951,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myTopRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         // Equip shirt on FPC model as well if it's the local player
         if (isFirstPerson()) {
@@ -975,7 +975,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         // Equips skin on FPC if is local player
         if (isFirstPerson()) {
@@ -1005,7 +1005,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
     }
 
     [PunRPC]
@@ -1036,7 +1036,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
         m.target = myHeadgearRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
@@ -1061,7 +1061,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFacewearRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
@@ -1086,7 +1086,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorTopRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
         equippedArmorBottomRef = (GameObject)Instantiate(p);
@@ -1094,7 +1094,7 @@ public class EquipmentScript : MonoBehaviour
         m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
@@ -1116,7 +1116,7 @@ public class EquipmentScript : MonoBehaviour
         MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFootwearRenderer.gameObject;
         m.rootBone = myBones.transform;
-        m.AdaptMesh();
+        m.AdaptMesh(playerActionScript.objectCarrying);
     }
 
     public void DespawnPlayer()

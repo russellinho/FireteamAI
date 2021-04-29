@@ -10,14 +10,21 @@ public class MeshFixer : MonoBehaviour
     
     private Dictionary<string, Transform> rootBoneMap;
 // Use this for initialization
-    public void AdaptMesh () {
+    public void AdaptMesh (GameObject objectCarrying = null) {
         SkinnedMeshRenderer targetRenderer = target.GetComponent<SkinnedMeshRenderer>();
         Dictionary<string,Transform> boneMap = new Dictionary<string,Transform>();
         rootBoneMap = new Dictionary<string, Transform>();
-
+        
+        if (objectCarrying != null && objectCarrying.gameObject.name == "VIP") {
+            Debug.LogError("yessir");
+            objectCarrying.SetActive(false);
+        }
         Transform[] r = rootBone.GetComponentsInChildren<Transform>();
         for (int i = 0; i < r.Length; i++) {
             rootBoneMap[r[i].gameObject.name] = r[i];
+        }
+        if (objectCarrying != null && objectCarrying.gameObject.name == "VIP") {
+            objectCarrying.SetActive(true);
         }
 
         foreach(Transform bone in targetRenderer.bones) {
