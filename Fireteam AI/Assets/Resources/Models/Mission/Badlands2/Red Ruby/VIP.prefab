@@ -2461,7 +2461,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5d52340aaa3b17f4faceef285d25b0c1, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2641,9 +2641,10 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
+  observableSearch: 0
   ObservedComponents:
   - {fileID: 5909265991541819899}
-  viewIdField: 0
+  sceneViewId: 0
   InstantiationId: 30
   isRuntimeInstantiated: 0
 --- !u!114 &5909265991541819899
