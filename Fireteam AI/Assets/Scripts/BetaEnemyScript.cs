@@ -2856,7 +2856,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	[PunRPC]
 	void RpcSyncDataEnemies(bool markerEnabled,
-					bool navMeshEnabled, float navMeshSpeed, bool navMeshObstacleEnabled, bool gunRefEnabled, bool bodyMeshEnabled, float preNavDestX, float preNavDestY,
+					bool navMeshEnabled, float navMeshSpeed, bool navMeshObstacleEnabled, bool gunRefEnabled, bool bodyDespawned, float preNavDestX, float preNavDestY,
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
@@ -2874,7 +2874,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		navMesh.enabled = navMeshEnabled;
 		navMeshObstacle.enabled = navMeshObstacleEnabled;
 		ToggleWeaponMesh(gunRefEnabled);
-		if (!bodyMeshEnabled) {
+		if (bodyDespawned) {
 			modeler.DespawnPlayer();
 			ToggleWeaponMesh(false);
 		}
