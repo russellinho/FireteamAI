@@ -2310,12 +2310,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			// Only check direct hit, no upper and lower half for non-humans
 			RaycastHit hit;
 			if (!Physics.Linecast(headTransform.position, targetRef.transform.position, out hit, OBSCURE_IGNORE)) {
-				Debug.LogError("hit " + hit.transform.gameObject.name);
+				Debug.LogError("hit A " + hit.transform.gameObject.name);
 				return true;
 			}
 			Carryable c = hit.transform.GetComponent<Carryable>();
 			if (c == null) {
-				Debug.LogError("hit " + hit.transform.gameObject.name);
+				Debug.LogError("hit B " + hit.transform.gameObject.name);
 				return true;
 			}
 		}
