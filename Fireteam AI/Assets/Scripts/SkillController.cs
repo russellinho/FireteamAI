@@ -1335,13 +1335,21 @@ public class SkillController : MonoBehaviour
 
     public float GetFireteamBoost(float avgDistanceBetweenTeam)
     {
-        if (avgDistanceBetweenTeam > 0f) {
-            float distMultiplier = Mathf.Min(1f, Mathf.Pow((8f / avgDistanceBetweenTeam), 1.5f));
-            if (distMultiplier < 0.1f) {
-                distMultiplier = 0f;
+        float totalFireteamBoost = Mathf.Min(fireteamBoost, FIRETEAM_BOOST_CAP);
+        if (totalFireteamBoost > 0f) {
+            if (avgDistanceBetweenTeam > 0f) {
+                float distMultiplier = Mathf.Min(1f, Mathf.Pow((8f / avgDistanceBetweenTeam), 1.5f));
+                if (distMultiplier < 0.1f) {
+                    distMultiplier = 0f;
+                }
+                totalFireteamBoost *= distMultiplier;
+                if (totalFireteamBoost > 0f) {
+                    hud.AddActiveSkill("310", 0f);
+                } else {
+                    hud.RemoveActiveSkill("310");
+                }
+                return totalFireteamBoost;
             }
-            hud.AddActiveSkill("310", 0f);
-            return Mathf.Min(fireteamBoost, FIRETEAM_BOOST_CAP) * distMultiplier;
         }
         hud.RemoveActiveSkill("310");
         return 0f;
