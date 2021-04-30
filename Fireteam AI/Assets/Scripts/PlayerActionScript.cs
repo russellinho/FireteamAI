@@ -20,7 +20,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const int WATER_LAYER = 4;
     const float UNDERWATER_TIMER = 30f;
     const float MAX_AVOID = 0.9f;
-    public static int MIN_DETECTION_LEVEL = 1;
+    public static int MIN_DETECTION_LEVEL = 4;
     public static int MAX_DETECTION_LEVEL = 80;
     private const float EXPLOSION_FORCE = 75f;
 	private const float BULLET_FORCE = 50f;

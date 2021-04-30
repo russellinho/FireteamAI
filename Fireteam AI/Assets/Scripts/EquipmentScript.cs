@@ -139,6 +139,11 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcEquipBottomInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedBottom);
         pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
         pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
+
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
+        playerScript.updateStats();
+
         SetOriginalFpcMaterials();
         SetOriginalMaterials();
 
@@ -1037,10 +1042,6 @@ public class EquipmentScript : MonoBehaviour
         m.target = myHeadgearRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh(playerActionScript.objectCarrying != null && playerActionScript.objectCarrying.GetComponent<NpcScript>() != null ? playerActionScript.objectCarrying.GetComponent<NpcScript>().pelvisTransform.gameObject : null);
-
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
-        playerScript.updateStats();
     }
 
     [PunRPC]
@@ -1062,10 +1063,6 @@ public class EquipmentScript : MonoBehaviour
         m.target = myFacewearRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh(playerActionScript.objectCarrying != null && playerActionScript.objectCarrying.GetComponent<NpcScript>() != null ? playerActionScript.objectCarrying.GetComponent<NpcScript>().pelvisTransform.gameObject : null);
-
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
-        playerScript.updateStats();
     }
 
     [PunRPC]
@@ -1095,10 +1092,6 @@ public class EquipmentScript : MonoBehaviour
         m.target = myArmorBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh(playerActionScript.objectCarrying != null && playerActionScript.objectCarrying.GetComponent<NpcScript>() != null ? playerActionScript.objectCarrying.GetComponent<NpcScript>().pelvisTransform.gameObject : null);
-
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
-        playerScript.updateStats();
     }
 
     [PunRPC]
@@ -1320,6 +1313,9 @@ public class EquipmentScript : MonoBehaviour
         EquipHeadgearInGame();
         EquipFacewearInGame();
         EquipArmorInGame();
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
+        playerScript.updateStats();
     }
 
     public void ToggleUpdateWhenOffscreen(bool b)
