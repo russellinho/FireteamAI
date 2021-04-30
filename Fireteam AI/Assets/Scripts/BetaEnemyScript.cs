@@ -16,12 +16,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
-	private const float OBJECT_VISIBILITY_MULTIPLIER = 85f;
+	private const float OBJECT_VISIBILITY_MULTIPLIER = 80f;
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
 	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
-	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17 | 1 << 22);
+	private const int OBSCURE_IGNORE = ~(1 << 13 | 1 << 16 | 1 << 17 | 1 << 22);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
 	private int HEALTH_KIT_DROP_CHANCE = 17;
@@ -2179,7 +2179,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Vector3 toTarget = b.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toTarget);
 					if (angleBetween <= 90f) {
-						if (TargetIsObscured(o.Value, true)) {
+						if (TargetIsObscured(o.Value, true, null, b)) {
 							continue;
 						}
 						// Increase suspicion level by constant level for this
@@ -2199,7 +2199,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Vector3 toTarget = c.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toTarget);
 					if (angleBetween <= 90f) {
-						if (TargetIsObscured(o.Value, false)) {
+						if (TargetIsObscured(o.Value, false, null, null)) {
 							continue;
 						}
 						// Increase suspicion level by constant level for this
@@ -2236,7 +2236,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						Vector3 toPlayer = p.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 						if (angleBetween <= 90f) {
-							if (TargetIsObscured(p, true)) {
+							if (TargetIsObscured(p, true, null, null)) {
 								continue;
 							}
 							keysNearBy.Add (p.GetComponent<PhotonView>().Owner.ActorNumber);
@@ -2252,7 +2252,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						Vector3 toNpc = npcP.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toNpc);
 						if (angleBetween <= 90f) {
-							if (!TargetIsObscured(npcP, true)) {
+							if (!TargetIsObscured(npcP, true, npcP.GetComponent<NpcScript>(), null)) {
 								keysNearBy.Add (-2);
 							}
 						}
@@ -2272,7 +2272,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 90f) {
 						// If still in eye view, check if there's something obscuring the player
-						if (TargetIsObscured(playerTargeting, true)) {
+						if (TargetIsObscured(playerTargeting, true, null, null)) {
 							UnseeTarget();
 						}
 					} else {
@@ -2285,7 +2285,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	bool TargetIsObscured(GameObject targetRef, bool isHuman) {
+	bool TargetIsObscured(GameObject targetRef, bool isHuman, NpcScript n, BetaEnemyScript b) {
 		if (isHuman) {
 			// Cast a ray to make sure there's nothing in between the player and the enemy
 			// Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
@@ -2298,21 +2298,26 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
 				topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
 			} else {
-				middleHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.1f, targetRef.transform.position.z);
-				topHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.2f, targetRef.transform.position.z);
+				if (n != null) {
+					middleHalfCheck = new Vector3(n.pelvisTransform.position.x, n.pelvisTransform.position.y, n.pelvisTransform.position.z);
+					topHalfCheck = new Vector3(n.headTransform.position.x, n.headTransform.position.y, n.headTransform.position.z);
+				} else if (b != null) {
+					middleHalfCheck = new Vector3(b.pelvisTransform.position.x, b.pelvisTransform.position.y, b.pelvisTransform.position.z);
+					topHalfCheck = new Vector3(b.headTransform.position.x, b.headTransform.position.y, b.headTransform.position.z);
+				}
 			}
 			RaycastHit hit1;
 			RaycastHit hit2;
-
 			if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
 			{
+				Debug.LogError("A");
 				return true;
 			}
 			if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
 			{
+				Debug.LogError("B");
 				return true;
 			}
-			
 			if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
 			{
 				return true;
@@ -2323,6 +2328,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 			} else {
 				if (!hit1.transform.gameObject.tag.Equals("Human") && !hit2.transform.gameObject.tag.Equals("Human")) {
+					Debug.LogError(hit1.transform.gameObject.name + " " + hit1.transform.gameObject.tag);
+					Debug.LogError(hit2.transform.gameObject.name + " " + hit2.transform.gameObject.tag);
 					return true;
 				}
 			}
