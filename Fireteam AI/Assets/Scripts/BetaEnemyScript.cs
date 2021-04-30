@@ -16,7 +16,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
-	private const float OBJECT_VISIBILITY_MULTIPLIER = 80f;
+	private const float OBJECT_VISIBILITY_MULTIPLIER = 75f;
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
@@ -2300,22 +2300,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			} else {
 				if (n != null) {
 					middleHalfCheck = new Vector3(n.pelvisTransform.position.x, n.pelvisTransform.position.y, n.pelvisTransform.position.z);
-					topHalfCheck = new Vector3(n.headTransform.position.x, n.headTransform.position.y, n.headTransform.position.z);
+					topHalfCheck = new Vector3(n.torsoTransform.position.x, n.torsoTransform.position.y, n.torsoTransform.position.z);
 				} else if (b != null) {
 					middleHalfCheck = new Vector3(b.pelvisTransform.position.x, b.pelvisTransform.position.y, b.pelvisTransform.position.z);
-					topHalfCheck = new Vector3(b.headTransform.position.x, b.headTransform.position.y, b.headTransform.position.z);
+					topHalfCheck = new Vector3(b.torsoTransform.position.x, b.torsoTransform.position.y, b.torsoTransform.position.z);
 				}
 			}
 			RaycastHit hit1;
 			RaycastHit hit2;
 			if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
 			{
-				Debug.LogError("A");
 				return true;
 			}
 			if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
 			{
-				Debug.LogError("B");
 				return true;
 			}
 			if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
@@ -2328,8 +2326,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				}
 			} else {
 				if (!hit1.transform.gameObject.tag.Equals("Human") && !hit2.transform.gameObject.tag.Equals("Human")) {
-					Debug.LogError(hit1.transform.gameObject.name + " " + hit1.transform.gameObject.tag);
-					Debug.LogError(hit2.transform.gameObject.name + " " + hit2.transform.gameObject.tag);
 					return true;
 				}
 			}
