@@ -2159,7 +2159,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	{
 		if (playerTargeting != null) {
 			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
-			return a.activeCamo;
+			if (a != null) {
+				return a.activeCamo;
+			}
 		}
 		return true;
 	}
