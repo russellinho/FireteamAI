@@ -16,7 +16,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
-	private const float OBJECT_VISIBILITY_MULTIPLIER = 75f;
+	private const float OBJECT_VISIBILITY_MULTIPLIER = 85f;
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
