@@ -141,7 +141,6 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        Debug.LogError("speed: " + newTotalStatBoosts.speedBoost + " | stamina: " + newTotalStatBoosts.staminaBoost + " | armor: " + newTotalStatBoosts.armorBoost + " | avoid: " + newTotalStatBoosts.avoidabilityBoost + " | detect: " + newTotalStatBoosts.detection);
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
 
@@ -1315,7 +1314,6 @@ public class EquipmentScript : MonoBehaviour
         EquipFacewearInGame();
         EquipArmorInGame();
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        Debug.LogError("speed: " + newTotalStatBoosts.speedBoost + " | stamina: " + newTotalStatBoosts.staminaBoost + " | armor: " + newTotalStatBoosts.armorBoost + " | avoid: " + newTotalStatBoosts.avoidabilityBoost + " | detect: " + newTotalStatBoosts.detection);
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
