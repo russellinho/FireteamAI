@@ -157,7 +157,6 @@ public class ThrowableScript : MonoBehaviour
         }
         explosionEffect.Play();
         isLive = false;
-        explosionDelayTimer = 0f;
         fuseTimer = 0f;
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
