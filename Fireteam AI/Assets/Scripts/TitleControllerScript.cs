@@ -25,11 +25,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float SEVEN_DAYS_MINS = 10080f;
 	private const float ONE_DAY_MINS = 1440f;
 	private const float PERMANENT = -1f;
-    private const float COST_MULT_FRACTION = 0.5f / 3f;
-    private const float SEVEN_DAY_COST_MULTIPLIER = 7f * (1f - (COST_MULT_FRACTION * 1f));
-    private const float THIRTY_DAY_COST_MULTIPLIER = 30f * (1f - (COST_MULT_FRACTION * 2f));
-    private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
-    private const float PERMANENT_COST_MULTIPLIER = 365f;
+    private const float COST_MULT_FRACTION_GP = 0.5f / 3.0f;
+	private const float COST_MULT_FRACTION_KASH = 0.9f / 4.0f;
+	private const float SEVEN_DAY_COST_MULTIPLIER_GP = 7f * (1f - (COST_MULT_FRACTION_GP));
+	private const float SEVEN_DAY_COST_MULTIPLIER_KASH = 7f * (1f - (COST_MULT_FRACTION_KASH * 1.25f));
+	private const float THIRTY_DAY_COST_MULTIPLIER_GP = 30f * (1f - (COST_MULT_FRACTION_GP * 2f));
+	private const float THIRTY_DAY_COST_MULTIPLIER_KASH = 30f * (1f - (COST_MULT_FRACTION_KASH * 3.25f));
+	private const float NINETY_DAY_COST_MULTIPLIER_GP= 90f * (1f - (COST_MULT_FRACTION_GP * 3f));
+	private const float NINETY_DAY_COST_MULTIPLIER_KASH = 90f * (1f - (COST_MULT_FRACTION_KASH * 3.75f));
+	private const float PERMANENT_COST_MULTIPLIER_GP = 180f;
+	private const float PERMANENT_COST_MULTIPLIER_KASH = 30f;
+	private const float SALE_CONSTANT = 0.35f;
 	public Connexion connexion;
 	public FriendsMessenger friendsMessenger;
 	public AchievementManager achievementManager;
@@ -3185,11 +3191,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			return;
 		}
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
-        float totalNewDuration = ConvertDurationInput(durationSelection.index);
-        totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
+		float durationSelected = ConvertDurationInput(durationSelection.index);
+        float totalNewDuration = (Mathf.Approximately(durationSelected, -1f) ? durationSelected : durationSelected + hasDuplicateCheck);
 		if (currencyTypeBeingPurchased == 'G') {
 			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {
-				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true);
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, durationSelected, true);
 				confirmPopup.ModalWindowOut();
 			} else {	
 				TriggerAlertPopup("You do not have enough GP to purchase this item.");
@@ -3198,7 +3204,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}	
 		} else if (currencyTypeBeingPurchased == 'K') {
 			if (PlayerData.playerdata.info.Kash >= totalCostBeingPurchased) {
-				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true);
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, durationSelected, true);
 				confirmPopup.ModalWindowOut();
 			} else {	
 				TriggerAlertPopup("You do not have enough KASH to purchase this item.");
@@ -3270,37 +3276,73 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	uint GetCostForItemAndType(string itemName, string itemType, int duration) {
         float durationMultiplier = 1f;
-		
-		if (itemType != "Mod") {
-			switch (duration)
-			{
-				case 1:
-					durationMultiplier = SEVEN_DAY_COST_MULTIPLIER;
-					break;
-				case 2:
-					durationMultiplier = THIRTY_DAY_COST_MULTIPLIER;
-					break;
-				case 3:
-					durationMultiplier = NINETY_DAY_COST_MULTIPLIER;
-					break;
-				case 4:
-					durationMultiplier = PERMANENT_COST_MULTIPLIER;
-					break;
-				default:
-					break;
+		int unitCost = 0;
 
+		if (currencyTypeBeingPurchased == 'G') {
+			if (itemType != "Mod") {
+				switch (duration)
+				{
+					case 1:
+						durationMultiplier = SEVEN_DAY_COST_MULTIPLIER_GP;
+						break;
+					case 2:
+						durationMultiplier = THIRTY_DAY_COST_MULTIPLIER_GP;
+						break;
+					case 3:
+						durationMultiplier = NINETY_DAY_COST_MULTIPLIER_GP;
+						break;
+					case 4:
+						durationMultiplier = PERMANENT_COST_MULTIPLIER_GP;
+						break;
+					default:
+						break;
+				}
+			}
+			if (itemType.Equals("Armor")) {
+				unitCost = InventoryScript.itemData.armorCatalog[itemName].gpPrice;
+			} else if (itemType.Equals("Character")) {
+				unitCost = InventoryScript.itemData.characterCatalog[itemName].gpPrice;
+			} else if (itemType.Equals("Weapon")) {
+				unitCost = InventoryScript.itemData.weaponCatalog[itemName].gpPrice;
+			} else if (itemType.Equals("Mod")) {
+				unitCost = InventoryScript.itemData.modCatalog[itemName].gpPrice;
+			} else {
+				unitCost = InventoryScript.itemData.equipmentCatalog[itemName].gpPrice;
+			}
+		} else {
+			if (itemType != "Mod") {
+				switch (duration)
+				{
+					case 1:
+						durationMultiplier = SEVEN_DAY_COST_MULTIPLIER_KASH;
+						break;
+					case 2:
+						durationMultiplier = THIRTY_DAY_COST_MULTIPLIER_KASH;
+						break;
+					case 3:
+						durationMultiplier = NINETY_DAY_COST_MULTIPLIER_KASH;
+						break;
+					case 4:
+						durationMultiplier = PERMANENT_COST_MULTIPLIER_KASH;
+						break;
+					default:
+						break;
+				}
+			}
+			if (itemType.Equals("Armor")) {
+				unitCost = InventoryScript.itemData.armorCatalog[itemName].kashPrice;
+			} else if (itemType.Equals("Character")) {
+				unitCost = InventoryScript.itemData.characterCatalog[itemName].kashPrice;
+			} else if (itemType.Equals("Weapon")) {
+				unitCost = InventoryScript.itemData.weaponCatalog[itemName].kashPrice;
+			} else if (itemType.Equals("Mod")) {
+				unitCost = InventoryScript.itemData.modCatalog[itemName].kashPrice;
+			} else {
+				unitCost = InventoryScript.itemData.equipmentCatalog[itemName].kashPrice;
 			}
 		}
-		if (itemType.Equals("Armor")) {
-			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.armorCatalog[itemName].gpPrice : InventoryScript.itemData.armorCatalog[itemName].kashPrice) * durationMultiplier);
-		} else if (itemType.Equals("Character")) {
-			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.characterCatalog[itemName].gpPrice : InventoryScript.itemData.characterCatalog[itemName].kashPrice) * durationMultiplier);
-		} else if (itemType.Equals("Weapon")) {
-			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.weaponCatalog[itemName].gpPrice : InventoryScript.itemData.weaponCatalog[itemName].kashPrice) * durationMultiplier);
-		} else if (itemType.Equals("Mod")) {
-			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.modCatalog[itemName].gpPrice : InventoryScript.itemData.modCatalog[itemName].kashPrice) * durationMultiplier);
-		}
-		return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.equipmentCatalog[itemName].gpPrice : InventoryScript.itemData.equipmentCatalog[itemName].kashPrice) * durationMultiplier);
+
+		return (uint)(unitCost * durationMultiplier);
 	}
 
 	public void UpdateCurrency() {
@@ -3963,25 +4005,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public int GetSalePriceForItem(DateTime acquireDate, int duration, int cost) {
-		cost /= 4;
 		if (duration == -1) {
-			return cost;
+			return (int)((float)cost * (float)PERMANENT_COST_MULTIPLIER_GP * (float)SALE_CONSTANT);
 		}
-
 		DateTime expirationDate = acquireDate.AddMinutes(duration);
 		DateTime currentDate = DateTime.Now;
-		int remainingDays = (expirationDate.Millisecond - currentDate.Millisecond) / 86400000;
+		int remainingDays = (int)Mathf.Round((float)(expirationDate - currentDate).TotalDays);
 		if (remainingDays == 0) {
 			remainingDays = 1;
 		}
-
-		if (remainingDays <= 7) {
-			return (int)(cost * remainingDays * (1f - (0.5f / 1f)));
-		} else if (remainingDays <= 30) {
-			return (int)(cost * remainingDays * (1f - (0.5f / 2f)));
-		}
-
-		return (int)(cost * remainingDays * (1f - (0.5f / 3f)));
+		return (int)((float)cost * (float)remainingDays * SALE_CONSTANT);
 	}
 
 	public void WarpJoinGame(string roomId, char mode)
