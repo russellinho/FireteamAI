@@ -99,6 +99,10 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         skillSlot.skillDescriptionPopupRef.SetThumbnail(skillSlot.skillThumb.mainTexture);
         skillSlot.skillDescriptionPopupRef.SetSkillStats(skillSlot.GetCurrentLevelForThisSkill(), skillSlot.GetMaxLevelForThisSkill(), skillSlot.GetPrerequisitesStringForThisSkill());
         skillSlot.skillDescriptionPopupRef.ToggleSkillStatDescriptor(true);
+        skillSlot.skillDescriptionPopupRef.ToggleClothingStatDescriptor(false);
+        skillSlot.skillDescriptionPopupRef.ToggleEquipmentStatDescriptor(false);
+        skillSlot.skillDescriptionPopupRef.ToggleModStatDescriptor(false);
+        skillSlot.skillDescriptionPopupRef.ToggleWeaponStatDescriptor(false);
         skillSlot.skillDescriptionPopupRef.gameObject.SetActive(true);
     }
 
