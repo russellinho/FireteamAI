@@ -830,6 +830,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     pView.RPC("RpcDefuseBomb", RpcTarget.AllBufferedViaServer, b.bombId);
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             } else if (interactingWith == "Deploy") {
                 hud.ToggleActionBar(true, "USING...");
@@ -846,6 +847,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         wepActionScript.UseBodyBagCase(d.deployableId);
                     }
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             } else if (interactingWith == "Flare") {
                 hud.ToggleActionBar(true, "POPPING FLARE...");
@@ -858,6 +860,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     pView.RPC("RpcPopFlare", RpcTarget.AllBufferedViaServer, f.flareId);
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             } else if (interactingWith == "Npc") {
                 hud.ToggleActionBar(true, "INTERACTING...");
@@ -872,6 +875,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     HandleCrouchEffects();
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             } else if (interactingWith == "Body") {
                 hud.ToggleActionBar(true, "DISPOSING...");
@@ -890,6 +894,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     HandleCrouchEffects();
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             } else if (interactingWith == "PlayerHeal") {
                 hud.ToggleActionBar(true, "HEALING TEAMMATE...");
@@ -904,6 +909,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     SetHealth(health - skillController.GetFlatlineSacrificeAmount(), false);
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 } else {
                     if (startedHealing) {
                         PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
@@ -922,6 +928,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     p.LastStandRevive();
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 } else {
                     if (startedReviving) {
                         PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
@@ -942,6 +949,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     }
                     activeInteractable = null;
                     interactionLock = true;
+                    SetInteracting(false, null);
                 }
             }
         } else {
@@ -981,6 +989,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             PopFlareCheck();
         }
         DropOffCheck();
+        if (activeInteractable == null || hud.PauseIsActive() || health < 0 || lastStandTimer > 0f) {
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
     }
 
     // If map objective is defusing bombs, this method checks if the player is near any bombs
@@ -1009,10 +1021,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO DEFUSE");
                 }
             }
-        } else {
-            // Stop using the deployable
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1035,10 +1043,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO HEAL TEAMMATE");
                 }
             }
-        } else {
-            // Stop using the deployable
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1061,10 +1065,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO REVIVE TEAMMATE");
                 }
             }
-        } else {
-            // Stop using the deployable
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1091,10 +1091,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO POP FLARE");
                 }
             }
-        } else {
-            // Stop using the deployable
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1121,9 +1117,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO INTERACT");
                 }
             }
-        } else {
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1148,9 +1141,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO BAG BODY");
                 }
             }
-        } else {
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
@@ -1175,9 +1165,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO PICK UP " + c.carryableName);
                 }
             }
-        } else {
-            SetInteracting(false, null);
-            hud.ToggleHintText(null);
         }
     }
 
