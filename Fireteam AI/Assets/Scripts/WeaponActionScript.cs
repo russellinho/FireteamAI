@@ -990,9 +990,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId, int shooterActorNo) {
         if (gameObject.layer == 0) return;
         if (terrainId == -1) {
-            GameObject bulletHoleEffect = Instantiate(OvershieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
-			bulletHoleEffect.GetComponent<AudioSource>().Play();
-			Destroy(bulletHoleEffect, 1.5f);
             return;
         }
         if (terrainId == -2) {
