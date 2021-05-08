@@ -265,6 +265,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public void SetXButtonActions()
 	{
 		if (currentPanel == "Game Options") {
+			Debug.LogError("CAME IN 1");
 			gameOptionsAnimator.Play("Panel Out");
 			mainAnimator.Play("Panel In");
 			xButton.gameObject.SetActive(false);
@@ -272,6 +273,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			SaveJoinMode();
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Settings") {
+			Debug.LogError("CAME IN 2");
 			SaveAudioSettings();
 			SaveKeyBindings();
 			xButton.gameObject.SetActive(false);
@@ -279,6 +281,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			mainAnimator.Play("Panel In");
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Kick") {
+			Debug.LogError("CAME IN 3");
 			kickPlayerAnimator.Play("Panel Out");
 			gameOptionsAnimator.Play("Panel In");
 			kickPlayerAnimator.gameObject.SetActive(false);
