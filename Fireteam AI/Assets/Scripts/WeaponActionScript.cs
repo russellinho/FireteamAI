@@ -212,7 +212,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     currentFiringModeIndex = 0;
                 }
                 firingMode = (FireMode)weaponStats.firingModes[currentFiringModeIndex];
-                hudScript.SetFireMode(firingMode.ToString().ToUpper());
+                hudScript.SetFireMode(GetFiringModeString(firingMode));
             }
         }
 
@@ -1414,7 +1414,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             SetFiringSpeedFullBody();
 
             if (pView.IsMine) {
-                hudScript.SetFireMode(w.firingModes == null ? null : firingMode.ToString().ToUpper());
+                hudScript.SetFireMode(w.firingModes == null ? null : GetFiringModeString(firingMode));
                 hudScript.SetWeaponLabel();
             }
         }
@@ -1638,6 +1638,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 playerActionScript.weaponScript.DrawPrimary();
             }
         }
+    }
+
+    string GetFiringModeString(FireMode f)
+    {
+        if (f == FireMode.Auto) {
+            return "AUTO";
+        }
+        return "SEMI";
     }
 
     public void UseLauncherItem() {
