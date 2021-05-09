@@ -1860,9 +1860,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (team != gameControllerScript.teamMap) return;
 		if (gameObject.layer == 0) return;
         if (terrainId == -1) {
-			GameObject bulletHoleEffect = Instantiate(overshieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
-			bulletHoleEffect.GetComponent<AudioSource>().Play();
-			Destroy(bulletHoleEffect, 1.5f);
+			return;
 		} else {
 			Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
 			GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
