@@ -1348,7 +1348,7 @@ public class SkillController : MonoBehaviour
                 } else {
                     hud.RemoveActiveSkill("310");
                 }
-                return totalFireteamBoost;
+                return (totalFireteamBoost < 0f ? 0f : totalFireteamBoost);
             }
         }
         hud.RemoveActiveSkill("310");

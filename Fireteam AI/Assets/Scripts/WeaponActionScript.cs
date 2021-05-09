@@ -756,6 +756,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
                         float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
                         float motivateDamageBoost = 1f + playerActionScript.skillController.GetMyMotivateDamageBoost();
+                        
                         b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost * motivateDamageBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         int nanoparticulatesChance = playerActionScript.skillController.GetNanoparticulatesChanceBoost();
                         if (nanoparticulatesChance > 0) {
@@ -1988,7 +1989,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return 0;
         }
         float maxDropoffAmount = damage / 3f;
-        return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
+        return (int)Mathf.Clamp((((distance - sustainRange) / dropoffRange) * maxDropoffAmount), 0f, maxDropoffAmount);
     }
 
     bool DetermineAmmoDeductSkip()

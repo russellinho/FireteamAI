@@ -24,8 +24,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const int OBSCURE_IGNORE = ~(1 << 13 | 1 << 16 | 1 << 17 | 1 << 22);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
-	private int HEALTH_KIT_DROP_CHANCE = 70;
-	private int AMMO_KIT_DROP_CHANCE = 5;
+	private int HEALTH_KIT_DROP_CHANCE = 8;
+	private int AMMO_KIT_DROP_CHANCE = 50;
 	private const int POISONED_DMG = 5;
 	private const float POISONED_INTERVAL = 1f;
 
