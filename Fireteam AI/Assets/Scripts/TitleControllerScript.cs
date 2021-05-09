@@ -692,6 +692,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void ScaleThumbnail(RawImage p, RectTransform t, float d)
+	{
+		p.SetNativeSize();
+		Debug.LogError("PRE: " + t.sizeDelta.x + " | " + t.sizeDelta.y);
+		t.sizeDelta = new Vector2(t.sizeDelta.x / d, t.sizeDelta.y / d);
+		Debug.LogError("POST: " + t.sizeDelta.x + " | " + t.sizeDelta.y);
+	}
+
 	public void OnHeadBtnClicked() {
 		// Delete any currently existing items in the grid
 		ClearCustomizationContent('e');
@@ -718,6 +726,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -746,6 +755,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -775,6 +785,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -803,6 +814,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -832,6 +844,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -860,6 +873,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -889,6 +903,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -917,6 +932,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -946,6 +962,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -974,6 +991,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -1003,6 +1021,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -1031,6 +1050,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -1063,6 +1083,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1092,6 +1113,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1127,6 +1149,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1160,6 +1183,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1189,6 +1213,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1220,6 +1245,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1253,6 +1279,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1282,6 +1309,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1313,6 +1341,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1346,6 +1375,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1375,6 +1405,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1406,6 +1437,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1439,6 +1471,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1468,6 +1501,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1499,6 +1533,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1532,6 +1567,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1561,6 +1597,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1592,6 +1629,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1625,6 +1663,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1654,6 +1693,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1685,6 +1725,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1718,6 +1759,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1747,6 +1789,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1778,6 +1821,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1811,6 +1855,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1840,6 +1885,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1871,6 +1917,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1904,6 +1951,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1933,6 +1981,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1964,6 +2013,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -1997,6 +2047,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2026,6 +2077,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2057,6 +2109,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2090,6 +2143,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2119,6 +2173,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2151,6 +2206,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2184,6 +2240,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2213,6 +2270,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2244,6 +2302,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2277,6 +2336,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2306,6 +2366,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2337,6 +2398,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2370,6 +2432,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2399,6 +2462,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2430,6 +2494,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2459,6 +2524,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2488,6 +2554,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2517,6 +2584,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2546,6 +2614,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -2574,6 +2643,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 3f);
 		}
 	}
 
@@ -2610,6 +2680,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
@@ -2646,6 +2717,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+			ScaleThumbnail(s.thumbnailRef, s.thumbnailRef.GetComponent<RectTransform>(), 4.5f);
 		}
 	}
 
