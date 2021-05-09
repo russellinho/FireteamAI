@@ -38,6 +38,9 @@ public class GiftEntryScript : MonoBehaviour
         } else {
             this.itemPic.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[itemName].thumbnailPath);
         }
+        this.itemPic.SetNativeSize();
+        RectTransform t = this.itemPic.GetComponent<RectTransform>();
+		t.sizeDelta = new Vector2(t.sizeDelta.x / 5f, t.sizeDelta.y / 5f);
     }
 
     private string ConvertDurationToText(float duration)

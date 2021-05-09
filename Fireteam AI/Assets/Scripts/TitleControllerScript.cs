@@ -695,9 +695,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void ScaleThumbnail(RawImage p, RectTransform t, float d)
 	{
 		p.SetNativeSize();
-		Debug.LogError("PRE: " + t.sizeDelta.x + " | " + t.sizeDelta.y);
 		t.sizeDelta = new Vector2(t.sizeDelta.x / d, t.sizeDelta.y / d);
-		Debug.LogError("POST: " + t.sizeDelta.x + " | " + t.sizeDelta.y);
 	}
 
 	public void OnHeadBtnClicked() {
@@ -3118,7 +3116,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
 		currencyTypeBeingPurchased = currencyType;
-		makePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
+		RawImage r = makePurchasePopup.GetComponentInChildren<RawImage>();
+		r.texture = thumb;
+		ScaleThumbnail(r, r.GetComponent<RectTransform>(), 3f);
         // Initialize with 1 day price
         SetTotalCost(0, durationSelection.GetCurrentItem());
 		TriggerMakePurchasePopup();
@@ -3132,7 +3132,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
 		currencyTypeBeingPurchased = currencyType;
-		giftPopup.GetComponentInChildren<RawImage>().texture = thumb;
+		RawImage r = giftPopup.GetComponentInChildren<RawImage>();
+		r.texture = thumb;
+		ScaleThumbnail(r, r.GetComponent<RectTransform>(), 3f);
 		SetTotalCostGift(0, durationSelectionGift.GetCurrentItem());
 		TriggerGiftPopup();
 	}
