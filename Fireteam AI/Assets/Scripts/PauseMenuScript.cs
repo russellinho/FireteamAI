@@ -265,7 +265,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public void SetXButtonActions()
 	{
 		if (currentPanel == "Game Options") {
-			Debug.LogError("CAME IN 1");
 			gameOptionsAnimator.Play("Panel Out");
 			mainAnimator.Play("Panel In");
 			xButton.gameObject.SetActive(false);
@@ -273,15 +272,17 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			SaveJoinMode();
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Settings") {
-			Debug.LogError("CAME IN 2");
-			SaveAudioSettings();
-			SaveKeyBindings();
+			try {
+				SaveAudioSettings();
+				SaveKeyBindings();
+			} catch (Exception e) {
+				Debug.LogError("Exception caught while saving settings. Did not save.");
+			}
 			xButton.gameObject.SetActive(false);
 			settingsAnimator.Play("Panel Out");
 			mainAnimator.Play("Panel In");
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Kick") {
-			Debug.LogError("CAME IN 3");
 			kickPlayerAnimator.Play("Panel Out");
 			gameOptionsAnimator.Play("Panel In");
 			kickPlayerAnimator.gameObject.SetActive(false);
@@ -292,6 +293,21 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public void SetCurrentPanel(string panel) {
 		this.currentPanel = panel;
+	}
+
+	public void SetMainPanel()
+	{
+		this.currentPanel = "Main";
+	}
+
+	public void SetSettingsPanel()
+	{
+		this.currentPanel = "Settings";
+	}
+
+	public void SetGameOptionsPanel()
+	{
+		this.currentPanel = "Game Options";
 	}
 
 	public void HandleEscape()
